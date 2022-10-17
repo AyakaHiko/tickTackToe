@@ -117,14 +117,16 @@ namespace TicTacToe
             {
                 if (_field[0, i] == null)
                     continue;
-                var element = _field[i, 0];
+                var element = _field[0, i];
+                if(element == null)
+                    continue;
+                
                 bool complete = true;
                 for (int j = 1; j < _size; j++)
                 {
-                    if (_field[j, i] == null || element != _field[j, i])
+                    if (element != _field[j, i])
                     {
                         complete = false;
-                        break;
                     }
                 }
                 if (complete)
@@ -139,11 +141,14 @@ namespace TicTacToe
                 if (_field[i, 0] == null)
                     continue;
                 var element = _field[i, 0];
+                if(element == null)
+                    continue;
+                
                 bool complete = true;
 
                 for (int j = 1; j < _size; j++)
                 {
-                    if (_field[i, j] == null || element != _field[i, j])
+                    if (element != _field[i, j])
                     {
                         complete = false;
                         break;

@@ -74,7 +74,7 @@ namespace GameServer
         private void Player_IsDisconnected(Client client)
         {
             _clients.Remove(client);
-            if(_clients.Count == 0)
+            if(!_isRun)
                 return;
             
             _clients[0].Win();
@@ -157,10 +157,14 @@ namespace GameServer
         {
             _isRun = false;
             _cts.Cancel();
-            foreach (var client in _clients)
+            for (var i = 0; i < _clients.Count; i++)
             {
+                var client = _clients[i];
+                _clients.Remove(client);
+                i--;
                 client.Close();
             }
+
             _clients.Clear();
 
         }

@@ -66,7 +66,7 @@ namespace GameServer
         }
 
 
-        public event Action<Client> IsDisconnected ;
+        public event Action<Client> IsDisconnected;
         public void Close()
         {
             IsDisconnected?.Invoke(this);
