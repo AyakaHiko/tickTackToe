@@ -132,7 +132,7 @@
             this.Controls.Add(this.connectBtn);
             this.Name = "Connection";
             this.Text = "Connection";
-            this.Load += new System.EventHandler(this.Connection_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Connection_FormClosing);
             this.connectConfig.ResumeLayout(false);
             this.connectConfig.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.portBox)).EndInit();

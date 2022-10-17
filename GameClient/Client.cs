@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using GameMessage;
 
@@ -27,7 +28,9 @@ namespace GameClient
             _serverPort = port;
         }
         public event Action<bool> IsConnected;
-        public Task ConnectAsync() => Task.Run(Connect);
+        private CancellationTokenSource _cts;
+        private CancellationToken _token;
+        public Task ConnectAsync() => Task.Run(Connect, _token);
         public void Connect()
         {
             if (Connected)
@@ -40,6 +43,8 @@ namespace GameClient
                     return;
                 }
 
+                _cts = new CancellationTokenSource();
+                _token = _cts.Token;
                 var message = _read();
                 if (message != null && message.Text.Equals("start", StringComparison.CurrentCultureIgnoreCase))
                     IsConnected?.Invoke(true);
@@ -55,6 +60,7 @@ namespace GameClient
         {
             try
             {
+                _cts.Cancel();
                 _client.Close();
                 var message = new MessagePacket(MessageType.Command) { Text = "Disconnect"};
                 Send(message);
@@ -89,7 +95,7 @@ namespace GameClient
             Send(message);
         }
 
-        public async Task SendCellAsync(int query) => await Task.Run(() => SendCell(query));
+        public async Task SendCellAsync(int query) => await Task.Run(() => SendCell(query), _token);
         public event Action<string> Response;
         private List<string> _endGameCommand = new List<string>();
 
@@ -114,6 +120,7 @@ namespace GameClient
         public event Action UnLock;
         public event Action<bool?> End;
         public event Action<int, char> MarkCell;
+
         public void ReadResponse()
         {
             if (!Connected)
@@ -145,12 +152,8 @@ namespace GameClient
 
 
         }
-        public async Task ReadResponseAsync() => await Task.Run(ReadResponse);
-
-        public void Close()
-        {
-
-        }
+        public async Task ReadResponseAsync() => await Task.Run(ReadResponse, _token);
+        
     }
 
 }

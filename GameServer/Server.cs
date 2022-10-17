@@ -64,10 +64,20 @@ namespace GameServer
             var client = _listener.AcceptTcpClient();
             Client player = _clients.Count == 0 ? new Client('x', client) : new Client('o', client);
             player.WinEvent += Player_WinEvent;
-            player.LooseEvent += Player_LooseEvent; ;
+            player.LooseEvent += Player_LooseEvent;
+            player.IsDisconnected += Player_IsDisconnected;
             _clients.Add(player);
             if (_clients.Count == 2)
                 _gameInit();
+        }
+
+        private void Player_IsDisconnected(Client client)
+        {
+            _clients.Remove(client);
+            if(_clients.Count == 0)
+                return;
+            
+            _clients[0].Win();
         }
 
         private Client _getClient(Player player)
@@ -99,8 +109,16 @@ namespace GameServer
             _game.EndGame += Game_EndGame;
             _game.Draw += _game_Draw;
             _game.StepEvent += Game_StepEvent;
-            p1.SendCommand(Commands.Start);
-            p2.SendCommand(Commands.Start);
+            try
+            {
+                p1.SendCommand(Commands.Start);
+                p2.SendCommand(Commands.Start);
+            }
+            catch (Exception e)
+            {   
+                return;
+            }
+
 
             Task.Run(() => _gameStart(p1, p2), _token);
         }

@@ -39,7 +39,6 @@ namespace tickTackToe
         private void _client_IsConnected(bool isConnect)
         {
             Invoke(isConnect ? new Action(_connection) : new Action(_disconnection));
-
         }
 
         private void _disconnection()
@@ -61,9 +60,8 @@ namespace tickTackToe
             (informLbl.Visible, connectConfig.Enabled) = (connectConfig.Enabled, informLbl.Visible);
         }
 
-        private void Connection_Load(object sender, EventArgs e)
+        private void Connection_FormClosing(object sender, FormClosingEventArgs e)
         {
-
         }
     }
 }

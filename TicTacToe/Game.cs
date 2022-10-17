@@ -68,12 +68,12 @@ namespace TicTacToe
         }
 
         public event Action<Player, int> StepEvent;
-       
+
         public void Step(Player player, int cell)
         {
             var x = (cell - 1) / _size;
-            var y = (cell-1) % _size;
-            _field[x,y] = player;
+            var y = (cell - 1) % _size;
+            _field[x, y] = player;
             _check();
             StepEvent?.Invoke(player, cell);
         }
@@ -147,10 +147,11 @@ namespace TicTacToe
                     {
                         complete = false;
                         break;
-                   }
+                    }
                 }
 
                 if (complete)
+
                     return element;
             }
             return null;
@@ -158,7 +159,7 @@ namespace TicTacToe
 
         private Player _diagonal1()
         {
-            if (_field[_size - 1, _size-1] == null)
+            if (_field[_size - 1, _size - 1] == null)
                 return null;
 
             bool complete = true;
@@ -179,7 +180,7 @@ namespace TicTacToe
 
         private Player _diagonal2()
         {
-            if (_field[_size - 1, 0] == null )
+            if (_field[_size - 1, 0] == null)
                 return null;
             bool complete = true;
             var element = _field[0, _size - 1];

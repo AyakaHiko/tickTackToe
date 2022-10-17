@@ -57,23 +57,20 @@ namespace GameServer
             } while (_stream.DataAvailable);
 
             var message = MessagePacket.FromBytes(buffer);
+            if (message==null ||message.Type == MessageType.Command)
+            {
+                Close();
+                return -1;
+            }
             return message?.Cell??-1;
         }
 
-        private int _readCell()
-        {
-            var buffer = new byte[32];
-            do
-            {
-                _stream.Read(buffer, 0, buffer.Length);
-            } while (_stream.DataAvailable);
 
-            var res = MessagePacket.FromBytes(buffer);
-            return res?.Cell ?? -1;
-        }
-
+        public event Action<Client> IsDisconnected ;
         public void Close()
         {
+            IsDisconnected?.Invoke(this);
+            _stream.Close();
             _client.Close();
         }
     }
