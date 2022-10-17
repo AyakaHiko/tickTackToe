@@ -52,6 +52,7 @@ namespace TicTacToe
             _field = new Player[_size, _size];
         }
         public event Action EndGame;
+        public event Action Draw;
         private void Player_Win(Player player)
         {
             if (player == _player1)
@@ -100,6 +101,7 @@ namespace TicTacToe
 
             if (draw.Result)
             {
+                Draw?.Invoke();
                 EndGame?.Invoke();
             }
         }
@@ -145,7 +147,7 @@ namespace TicTacToe
                     {
                         complete = false;
                         break;
-                    }
+                   }
                 }
 
                 if (complete)

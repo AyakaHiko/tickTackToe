@@ -57,13 +57,8 @@ namespace tickTackToe
 
         private void _switch()
         {
-            (connectBtn.Enabled, cancelBtn.Enabled) = (cancelBtn.Enabled, connectBtn.Enabled);
+            connectBtn.Enabled = !connectBtn.Enabled;
             (informLbl.Visible, connectConfig.Enabled) = (connectConfig.Enabled, informLbl.Visible);
-        }
-
-        private void cancelBtn_Click(object sender, EventArgs e)
-        {
-            _switch();
         }
 
         private void Connection_Load(object sender, EventArgs e)

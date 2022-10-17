@@ -97,12 +97,22 @@ namespace GameServer
             Client p1 = _clients[0], p2 = _clients[1];
             _game = new Game(p1, p2);
             _game.EndGame += Game_EndGame;
+            _game.Draw += _game_Draw;
             _game.StepEvent += Game_StepEvent;
             p1.SendCommand(Commands.Start);
             p2.SendCommand(Commands.Start);
 
             Task.Run(() => _gameStart(p1, p2), _token);
         }
+
+        private void _game_Draw()
+        {
+            foreach (var client in _clients)
+            {
+                client.SendResultCommand(null);
+            }
+        }
+
         private void _gameStart(Client p1, Client p2)
         {
             _isRun = true;
