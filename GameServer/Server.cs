@@ -74,9 +74,9 @@ namespace GameServer
         private void Player_IsDisconnected(Client client)
         {
             _clients.Remove(client);
-            if(!_isRun)
+            if (!_isRun)
                 return;
-            
+
             _clients[0].Win();
         }
 
@@ -115,7 +115,7 @@ namespace GameServer
                 p2.SendCommand(Commands.Start);
             }
             catch (Exception e)
-            {   
+            {
                 return;
             }
 
@@ -136,21 +136,33 @@ namespace GameServer
             _isRun = true;
             while (_isRun)
             {
-                _step(p1, p2);
-                _step(p2, p1);
+                try
+                {
+                    _step(p1, p2);
+                    _step(p2, p1);
+                }
+                catch (Exception)
+                {
+                    _game.End();
+                }
             }
         }
         private void _step(Client p1, Client p2)
         {
             p1.SendCommand(Commands.UnLock);
+
             var cell = p1.ReadCell();
+
             Task.Run(() => p2.SendCellCommand(cell, p1.Symbol), _token);
             Task.Run(() => p1.SendCellCommand(cell, p1.Symbol), _token);
+
             _game.Step(p1, cell);
             p1.SendCommand(Commands.Lock);
+
         }
         private void Game_StepEvent(Player player, int sell)
         {
+            //todo
         }
 
         private void Game_EndGame()
@@ -164,9 +176,6 @@ namespace GameServer
                 i--;
                 client.Close();
             }
-
-            _clients.Clear();
-
         }
 
         public event Action Stopped;

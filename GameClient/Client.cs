@@ -60,7 +60,6 @@ namespace GameClient
         {
             _cts.Cancel();
             _client.Close();
-            _client.Dispose();
             IsConnected?.Invoke(false);
 
         }
@@ -104,6 +103,7 @@ namespace GameClient
         public async Task SendCellAsync(int query) => await Task.Run(() => SendCell(query), _token);
         public event Action<string> Response;
         private List<string> _endGameCommand = new List<string>();
+        private bool _isEnd=false;
 
         private void _init()
         {
@@ -113,6 +113,7 @@ namespace GameClient
 
         private MessagePacket _read()
         {
+
             var stream = _client.GetStream();
             byte[] buffer = new byte[1024];
             do
@@ -133,7 +134,7 @@ namespace GameClient
             {
                 return;
             }
-            while (true)
+            while (!_isEnd)
             {
                 var message = _read();
                 if (message == null)
@@ -152,6 +153,7 @@ namespace GameClient
                         break;
                     case "End":
                         End?.Invoke(message.Result);
+                        _isEnd =true;
                         break;
                 }
             }

@@ -92,8 +92,8 @@ namespace GameServer
         public void Close()
         {
             IsDisconnected?.Invoke(this);
-            _stream.Close();
-            _client.Close();
+         //   _stream.Close();
+         //   _client.Close();
         }
     }
 }

@@ -204,5 +204,9 @@ namespace TicTacToe
 
         #endregion
 
+        public void End()
+        {
+            EndGame?.Invoke();
+        }
     }
 }

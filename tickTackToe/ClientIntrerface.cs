@@ -26,21 +26,22 @@ namespace tickTackToe
             _client.IsConnected += _client_IsConnected;
             _client.End += _client_End;
         }
-
+        private bool _isEnd = false;
         private void _client_End(bool? result)
         {
             string resText = String.Empty;
             switch (result)
             {
                 case null:
-                    resText = "Draw";break;
+                    resText = "Draw"; break;
                 case true:
-                    resText = "Win";break;
+                    resText = "Win"; break;
                 case false:
-                    resText = "Loose";break;
+                    resText = "Loose"; break;
             }
 
             MessageBox.Show(resText);
+            _isEnd = true;
             Action a = Close;
             if (InvokeRequired)
                 Invoke(a);
@@ -53,7 +54,7 @@ namespace tickTackToe
 
         private void _client_MarkCell(int cell, char symbol)
         {
-            if(cell == -1) return;
+            if (cell == -1) return;
             Action a = () =>
             {
                 foreach (var control in fieldPanel.Controls)
@@ -87,7 +88,7 @@ namespace tickTackToe
 
         private void _client_Lock()
         {
-           Action a = ()=> fieldPanel.Enabled = false;
+            Action a = () => fieldPanel.Enabled = false;
             if (InvokeRequired)
                 Invoke(a);
             else
@@ -135,7 +136,11 @@ namespace tickTackToe
 
         private void GameInterface_FormClosing(object sender, FormClosingEventArgs e)
         {
-            _client.Disconnect();
+
+            if (!fieldPanel.Enabled && !_isEnd)
+                e.Cancel = true;
+            else
+                _client.Disconnect();
         }
     }
 }
