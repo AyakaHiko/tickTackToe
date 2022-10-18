@@ -11,6 +11,9 @@ namespace GameServer
     {
         private TcpClient _client;
         private NetworkStream _stream;
+
+        public bool Connected => _client.Connected;
+
         public Client(char symbol, TcpClient client) : base(symbol)
         {
             _client = client;
@@ -48,7 +51,7 @@ namespace GameServer
             _sendCommand(packet);
         }
 
-        public int Read()
+        private MessagePacket _read()
         {
             var buffer = new byte[1024];
             do
@@ -56,7 +59,26 @@ namespace GameServer
                 _stream.Read(buffer, 0, buffer.Length);
             } while (_stream.DataAvailable);
 
-            var message = MessagePacket.FromBytes(buffer);
+            return MessagePacket.FromBytes(buffer);
+        }
+        public void ReadCommand()
+        {
+            var message = _read();
+            if (message == null || message.Type != MessageType.Command)
+            {
+                return;
+            }
+
+            switch (message.Text)
+            {
+                case "Disconnect":
+                    Close();
+                    break;
+            }
+        }
+        public int ReadCell()
+        {
+            var message = _read();
             if (message==null ||message.Type == MessageType.Command)
             {
                 Close();

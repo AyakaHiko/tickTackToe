@@ -62,6 +62,7 @@ namespace tickTackToe
 
         private void Connection_FormClosing(object sender, FormClosingEventArgs e)
         {
+            //_client?.Disconnect();
         }
     }
 }

@@ -18,9 +18,10 @@ namespace tickTackToe
             Application.SetCompatibleTextRenderingDefault(false);
             var connectForm = new Connection();
             Application.Run(connectForm);
-            if(connectForm.Game==null)
+            var game = connectForm.Game;
+            if(game==null)
                 return;
-            Application.Run(connectForm.Game);
+            Application.Run(game);
         }
     }
 }

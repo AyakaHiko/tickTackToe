@@ -143,7 +143,7 @@ namespace GameServer
         private void _step(Client p1, Client p2)
         {
             p1.SendCommand(Commands.UnLock);
-            var cell = p1.Read();
+            var cell = p1.ReadCell();
             Task.Run(() => p2.SendCellCommand(cell, p1.Symbol), _token);
             Task.Run(() => p1.SendCellCommand(cell, p1.Symbol), _token);
             _game.Step(p1, cell);

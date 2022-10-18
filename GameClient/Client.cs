@@ -56,15 +56,21 @@ namespace GameClient
             }
         }
 
+        public void Close()
+        {
+            _cts.Cancel();
+            _client.Close();
+            _client.Dispose();
+            IsConnected?.Invoke(false);
+
+        }
         public void Disconnect()
         {
             try
             {
-                _cts.Cancel();
-                _client.Close();
+                Close();
                 var message = new MessagePacket(MessageType.Command) { Text = "Disconnect"};
                 Send(message);
-                IsConnected?.Invoke(false);
             }
             catch (Exception e)
             {
