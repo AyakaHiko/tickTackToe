@@ -64,8 +64,8 @@ namespace GameServer
             var client = _listener.AcceptTcpClient();
             //todo
             char symbol = _clients.Count == 0 ? 'x' : 'o';
-            if(_clients.Count == 1)
-                symbol = _clients[0].Symbol == 'x'? 'o': 'x';
+            if (_clients.Count == 1)
+                symbol = _clients[0].Symbol == 'x' ? 'o' : 'x';
             Client player = new Client(symbol, client);
             player.WinEvent += Player_WinEvent;
             player.LooseEvent += Player_LooseEvent;
@@ -90,14 +90,26 @@ namespace GameServer
         }
         private void Player_LooseEvent(Player player)
         {
-            var client = _getClient(player);
-            client?.SendResultCommand(false);
+            _PlayerEndEvent(player, false);
         }
 
         private void Player_WinEvent(Player player)
         {
+            _PlayerEndEvent(player, true);
+        }
+
+        private void _PlayerEndEvent(Player player, bool? result)
+        {
             var client = _getClient(player);
-            client?.SendResultCommand(true);
+            if (client == null)
+            {
+                _clients.ForEach(c=>c.SendResultCommand(result));
+            }
+            else
+            {
+                client?.SendResultCommand(result);
+                _clients.Remove(client);
+            }
         }
 
         private Game _game;
@@ -119,7 +131,7 @@ namespace GameServer
             }
             catch (Exception e)
             {
-                _clients.RemoveAt(0);
+                _clients.Remove(p1);
                 Inform?.Invoke(e.Message);
                 return;
             }
@@ -130,7 +142,7 @@ namespace GameServer
             }
             catch (Exception e)
             {
-                _clients.RemoveAt(1);
+                _clients.Remove(p2);
                 Inform?.Invoke(e.Message);
                 return;
             }

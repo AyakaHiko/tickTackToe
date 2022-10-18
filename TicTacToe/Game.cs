@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TicTacToe
 {
-    public class Player
+    public class Player:IEqualityComparer<Player>
     {
         public Player(char symbol)
         {
@@ -30,6 +30,20 @@ namespace TicTacToe
         public event Action<Player> WinEvent;
         public event Action<Player> LooseEvent;
         public event Action<Player> DrawEvent;
+
+        public bool Equals(Player x, Player y)
+        {
+            if (ReferenceEquals(x, y)) return true;
+            if (ReferenceEquals(x, null)) return false;
+            if (ReferenceEquals(y, null)) return false;
+            if (x.GetType() != y.GetType()) return false;
+            return x.Symbol == y.Symbol;
+        }
+
+        public int GetHashCode(Player obj)
+        {
+            return obj.Symbol.GetHashCode();
+        }
     }
 
     public class Game
