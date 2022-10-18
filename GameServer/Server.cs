@@ -62,7 +62,11 @@ namespace GameServer
             if (_clients.Count == 2)
                 return;
             var client = _listener.AcceptTcpClient();
-            Client player = _clients.Count == 0 ? new Client('x', client) : new Client('o', client);
+            //todo
+            char symbol = _clients.Count == 0 ? 'x' : 'o';
+            if(_clients.Count == 1)
+                symbol = _clients[0].Symbol == 'x'? 'o': 'x';
+            Client player = new Client(symbol, client);
             player.WinEvent += Player_WinEvent;
             player.LooseEvent += Player_LooseEvent;
             player.IsDisconnected += Player_IsDisconnected;
@@ -112,10 +116,22 @@ namespace GameServer
             try
             {
                 p1.SendCommand(Commands.Start);
+            }
+            catch (Exception e)
+            {
+                _clients.RemoveAt(0);
+                Inform?.Invoke(e.Message);
+                return;
+            }
+
+            try
+            {
                 p2.SendCommand(Commands.Start);
             }
             catch (Exception e)
             {
+                _clients.RemoveAt(1);
+                Inform?.Invoke(e.Message);
                 return;
             }
 
@@ -133,6 +149,11 @@ namespace GameServer
 
         private void _gameStart(Client p1, Client p2)
         {
+            foreach (var client in _clients)
+            {
+                if (!client.Connected)
+                    return;
+            }
             _isRun = true;
             while (_isRun)
             {

@@ -17,6 +17,7 @@ namespace GameMessage
     public class MessagePacket
     {
         public MessageType Type { get; private set; }
+        public int Id { get; set; }
         public string Text { get; set; }
         public int Cell { get; set; }
         public char Content { get; set; }

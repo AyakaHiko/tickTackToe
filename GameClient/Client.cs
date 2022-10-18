@@ -60,6 +60,7 @@ namespace GameClient
         {
             _cts.Cancel();
             _client.Close();
+            _client.Dispose();
             IsConnected?.Invoke(false);
 
         }
